@@ -1,6 +1,7 @@
 # Vite Three Audio Visualizer
 
-![audio_visualizer_screen](https://user-images.githubusercontent.com/4311684/177320766-490a234d-8446-44ab-9b2b-5cf354410390.png)
+![audio_visualizer_screen](https://user-images.githubusercontent.com/4311684/177391612-3cfd19cf-4fa6-45bf-8072-accd62942739.png)
+
 
 ## Setup
 
