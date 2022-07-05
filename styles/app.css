@@ -1,0 +1,83 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100vh;
+  font-family: Arial, Helvetica, Arial, sans-serif;
+  background-color: rgb(27, 27, 31);
+}
+
+#app > .container {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+}
+#app > .container > h1 {
+  color: rgb(247, 247, 247);
+}
+#app > .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+}
+#app > .container > h1 {
+  color: rgb(105, 233, 255);
+}
+
+/**
+  * Uadio Player
+  */
+#app > .container > .audio-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+}
+#app > .container > .audio-player > .audio-name {
+  color: #fff;
+  font-style: italic;
+}
+#app > .container > .audio-player > #audio-controller {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background-color: rgb(255 255 255 / 94%);
+  border-radius: 0.5em;
+  padding: 0.5em;
+  box-shadow: 5px 5px 5px 0 rgba(252, 169, 169, 0.6);
+}
+
+#experience {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  outline: none;
+}
+
+.disabled {
+  pointer-events: none;
+}
