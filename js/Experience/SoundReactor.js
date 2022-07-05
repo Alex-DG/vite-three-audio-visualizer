@@ -1,14 +1,23 @@
 import audioSrc from '../../assets/audio/Pandrezz-Curtain Call-(144p).mp4'
 
-class AudioController {
+class SoundReactor {
   constructor() {
+    this.dataArray = new Uint8Array([0])
+    this.playing = false
+
+    this.init()
+  }
+
+  init() {
     this.setElement()
-    this.setAudioContext()
   }
 
   setElement() {
     this.audioElement = document.getElementById('audio-controller')
 
+    this.audioElement.onplay = () => {
+      this.setupAudioContext()
+    }
     this.audioElement.onloadstart = () => {
       this.audioElement.classList.add('disabled')
     }
@@ -19,42 +28,52 @@ class AudioController {
     this.audioElement.src = audioSrc
   }
 
-  setAudioContext() {
-    this.audioContext = new window.AudioContext()
+  setupAudioContext() {
+    if (this.audioContext) return
+
+    this.audioContext = new AudioContext()
+
     this.source = this.audioContext.createMediaElementSource(this.audioElement)
+
     this.analyser = this.audioContext.createAnalyser()
+    this.analyser.smoothingTimeConstant = 0.8
+
     this.source.connect(this.analyser)
     this.analyser.connect(this.audioContext.destination)
+
     this.analyser.fftSize = 1024
+
     this.dataArray = new Uint8Array(this.analyser.frequencyBinCount)
   }
 
   play() {
-    this.audioElement.play()
+    this.setPlayState(true)
+    this.audioElement?.play()
   }
 
   pause() {
-    this.audioElement.pause()
+    this.setPlayState(false)
+    this.audioElement?.pause()
   }
 
   setPlayState(value) {
-    this.isPlaying = value
+    this.playing = value
   }
 
   isPlaying() {
-    return !this.audioElement.paused
+    this.setPlayState(!this.audioElement?.paused)
+    return this.playing
   }
 
-  getDataArray() {
+  getAudioData() {
     return this.dataArray
   }
 
   update() {
     if (this.isPlaying()) {
-      // console.log(this.dataArray)
       this.analyser?.getByteFrequencyData(this.dataArray)
     }
   }
 }
 
-export default AudioController
+export default SoundReactor

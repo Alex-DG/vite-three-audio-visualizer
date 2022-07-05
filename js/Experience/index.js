@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-import AudioController from './AudioController'
+import SoundReactor from './SoundReactor'
 import VisualizerMaterial from './VisualizerMaterial'
 
 class Experience {
@@ -97,7 +97,7 @@ class Experience {
     this.scene.add(this.plane)
   }
   setAudioController() {
-    this.audioController = new AudioController()
+    this.audioController = new SoundReactor()
   }
   setResize() {
     window.addEventListener('resize', this.resize)
@@ -112,17 +112,22 @@ class Experience {
   }
 
   updateVisualizer() {
-    if (this.planeMaterial) {
+    if (this.audioController.isPlaying()) {
       // Update audio data
-      this.audioController?.update()
-      const dataArray = this.audioController?.getDataArray() // get audio data
+      this.audioController.update()
+      const audioData = this.audioController.getAudioData()
 
       // Update plane material
-      this.planeMaterial.uniforms.uTime.value = this.elapsedTime * 2
-      this.planeMaterial.uniforms.uDataArray.value = dataArray
+      const { uTime, uDataArray } = this.planeMaterial.uniforms
+      uTime.value = this.elapsedTime
+      uDataArray.value = audioData
+    }
 
-      // Update plane mesh
-      this.plane.rotation.y = Math.sin(this.elapsedTime) * 0.025
+    // Update plane mesh
+    if (this.plane) {
+      const { position, rotation } = this.plane
+      position.z = Math.sin(this.elapsedTime * 0.5) * 8
+      rotation.y = Math.sin(this.elapsedTime) * 0.1
     }
   }
 

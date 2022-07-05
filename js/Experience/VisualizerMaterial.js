@@ -9,8 +9,8 @@ class VisualizerMaterial extends ShaderMaterial {
       wireframe: true,
       uniforms: {
         uTime: { value: 0.0 },
-        uDataArray: { value: new Uint8Array() },
-        uAmplitude: { value: 4.0 },
+        uDataArray: { value: new Uint8Array([0]) },
+        uAmplitude: { value: 6.0 },
       },
       vertexShader,
       fragmentShader,
