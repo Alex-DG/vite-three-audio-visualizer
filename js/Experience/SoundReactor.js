@@ -1,4 +1,4 @@
-import audioSrc from '../../assets/audio/Pandrezz-Curtain Call-(144p).mp4'
+import audioSrc from '../../assets/audio/Pandrezz_Curtain_Call.mp4'
 
 class SoundReactor {
   constructor() {
