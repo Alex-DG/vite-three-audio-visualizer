@@ -7,10 +7,12 @@ import VisualizerMaterial from './VisualizerMaterial'
 class Experience {
   constructor(options) {
     this.scene = new THREE.Scene()
+    this.group = new THREE.Group()
     this.clock = new THREE.Clock()
     this.container = options.domElement
     this.lastElapsedTime = 0
     this.deltaTime = 0
+
     this.init()
   }
 
@@ -24,7 +26,7 @@ class Experience {
     this.setRenderer()
     this.setCamera()
     this.setAudioController()
-    this.setPlane()
+    this.setVisualizer()
     this.setResize()
 
     this.update()
@@ -45,9 +47,6 @@ class Experience {
     // Update camera
     this.camera.aspect = this.sizes.width / this.sizes.height
     this.camera.updateProjectionMatrix()
-
-    // Update plane
-    // planeFitPerspectiveCamera(this.plane, this.camera, this.renderer.domElement)
 
     // Update renderer
     this.renderer.setSize(this.sizes.width, this.sizes.height)
@@ -86,15 +85,17 @@ class Experience {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     this.container.appendChild(this.renderer.domElement)
   }
-  setPlane() {
-    this.planeMaterial = new VisualizerMaterial()
-    this.plane = new THREE.Mesh(
-      new THREE.PlaneBufferGeometry(64, 64, 64, 64),
-      this.planeMaterial
-    )
-    this.plane.rotation.x = -Math.PI / 2 + Math.PI / 3
-    this.plane.position.set(0, -5, 0)
-    this.scene.add(this.plane)
+  setVisualizer() {
+    this.material = new VisualizerMaterial()
+    const geometry = new THREE.IcosahedronBufferGeometry(64, 64, 64, 64)
+
+    this.visualizer = new THREE.Mesh(geometry, this.material)
+    this.visualizer.rotation.x = -Math.PI / 2 + Math.PI / 3
+    this.visualizer.position.set(0, -5, 0)
+    this.group.rotation.y = Math.PI * 0.15
+
+    this.group.add(this.visualizer)
+    this.scene.add(this.group)
   }
   setAudioController() {
     this.audioController = new SoundReactor()
@@ -117,15 +118,15 @@ class Experience {
       this.audioController.update()
       const audioData = this.audioController.getAudioData()
 
-      // Update plane material
-      const { uTime, uDataArray } = this.planeMaterial.uniforms
+      // Update visualizer material
+      const { uTime, uDataArray } = this.material.uniforms
       uTime.value = this.elapsedTime
       uDataArray.value = audioData
     }
 
-    // Update plane mesh
-    if (this.plane) {
-      const { position, rotation } = this.plane
+    // Update visualizer mesh
+    if (this.visualizer) {
+      const { position, rotation } = this.visualizer
       position.z = Math.sin(this.elapsedTime * 0.5) * 8
       rotation.y = Math.sin(this.elapsedTime) * 0.1
     }

@@ -1,18 +1,54 @@
 import audioSrc from '../../assets/audio/Pandrezz_Curtain_Call.mp4'
+import { audioFileImport, audioNameUpdate } from './utils/file'
 
 class SoundReactor {
   constructor() {
     this.dataArray = new Uint8Array([0])
     this.playing = false
 
+    this.bind()
     this.init()
   }
 
-  init() {
-    this.setElement()
+  bind() {
+    this.onSelectAudioFile = this.onSelectAudioFile.bind(this)
   }
 
-  setElement() {
+  init() {
+    this.setAudioController()
+    this.setAudioImport()
+  }
+
+  onSelectAudioFile(files) {
+    console.log(files)
+
+    if (!files?.length) return
+
+    try {
+      const file = files[0]
+      audioNameUpdate(file?.name || '')
+
+      // Create a blob that we can use as an src for our audio element
+      const urlObj = URL.createObjectURL(file)
+      console.log({ file })
+      const cleanUp = () => {
+        URL.revokeObjectURL(urlObj)
+      }
+      // Clean up the URL Object after we are done with it
+      this.audioElement.addEventListener('load', cleanUp)
+      // Set the new audio as a source of our audio controller
+      this.audioElement.src = urlObj
+
+      this.play() // 🔉
+
+      this.audioElement.removeEventListener('load', cleanUp)
+    } catch (error) {
+      console.error({ error })
+      alert(error.message)
+    }
+  }
+
+  setAudioController() {
     this.audioElement = document.getElementById('audio-controller')
 
     this.audioElement.onplay = () => {
@@ -26,6 +62,15 @@ class SoundReactor {
     }
 
     this.audioElement.src = audioSrc
+  }
+
+  /**
+   * WIP
+   */
+  setAudioImport() {
+    const selectFile = () => audioFileImport(this.onSelectAudioFile)
+    this.audioSelect = document.querySelector('.select-btn')
+    this.audioSelect.addEventListener('click', selectFile)
   }
 
   setupAudioContext() {

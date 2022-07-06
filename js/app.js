@@ -4,9 +4,6 @@ import Experience from './Experience'
 console.log('🎉', 'Project generated using vite-three-starter')
 console.log(':: https://github.com/Alex-DG/vite-three-starter ::')
 
-const trackUrl =
-  'https://open.spotify.com/track/5PwouDkiuNLlIBRvRWeAsE?si=3ab108548c6f43c7'
-
 /**
  * Documentations
  */
@@ -17,7 +14,13 @@ document.querySelector('#app').innerHTML = `
     <figure class="audio-player">
       <audio id="audio-controller" controls>
       </audio>
-      <a class="audio-name" href=${trackUrl} target="_blank">Pandrezz - Curtain Call</a>
+     
+      <div class="audio-select">
+        <span class="audio-name">Pandrezz - Curtain Call</span>
+        <button class="select-btn">
+          <h2>🗂️</h2>
+        </button>
+      </div>
     </figure>
   </div>
 `
