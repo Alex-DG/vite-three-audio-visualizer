@@ -87,7 +87,7 @@ class Experience {
   }
   setVisualizer() {
     this.material = new VisualizerMaterial()
-    const geometry = new THREE.IcosahedronBufferGeometry(64, 64, 64, 64)
+    const geometry = new THREE.PlaneBufferGeometry(128, 128, 64, 64)
 
     this.visualizer = new THREE.Mesh(geometry, this.material)
     this.visualizer.rotation.x = -Math.PI / 2 + Math.PI / 3

@@ -57,11 +57,19 @@ body {
   gap: 1em;
 }
 #app > .container > .audio-player > .audio-select > .select-btn {
-  padding: 0.8em;
+  padding: 0.4em;
   background: transparent;
   border: 2px solid hotpink;
   border-radius: 8px;
   cursor: pointer;
+}
+#app > .container > .audio-player > .audio-select > .reset-btn {
+  padding: 0.4em;
+  background: transparent;
+  border: 2px solid rgb(92, 255, 77);
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0;
 }
 #app > .container > .audio-player > .audio-select > .audio-name {
   color: #fff;

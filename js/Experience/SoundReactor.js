@@ -1,5 +1,5 @@
 import audioSrc from '../../assets/audio/Pandrezz_Curtain_Call.mp4'
-import { audioFileImport, audioNameUpdate } from './utils/file'
+import { audioFileImport, audioNameUpdate, audioReset } from './utils/audio'
 
 class SoundReactor {
   constructor() {
@@ -12,16 +12,23 @@ class SoundReactor {
 
   bind() {
     this.onSelectAudioFile = this.onSelectAudioFile.bind(this)
+    this.onResetAudio = this.onResetAudio.bind(this)
+    this.play = this.play.bind(this)
   }
 
   init() {
+    this.setAudioReset()
     this.setAudioController()
     this.setAudioImport()
   }
 
-  onSelectAudioFile(files) {
-    console.log(files)
+  //////////////////////////////////////////////////////////////////////////////
 
+  onResetAudio() {
+    audioReset(this.audioElement, this.play)
+  }
+
+  onSelectAudioFile(files) {
     if (!files?.length) return
 
     try {
@@ -41,12 +48,19 @@ class SoundReactor {
 
       this.play() // 🔉
 
+      // On change enable the reset button
+      if (!this.resetBtn.style.disabled) {
+        this.resetBtn.style.opacity = '1'
+      }
+
       this.audioElement.removeEventListener('load', cleanUp)
     } catch (error) {
       console.error({ error })
       alert(error.message)
     }
   }
+
+  //////////////////////////////////////////////////////////////////////////////
 
   setAudioController() {
     this.audioElement = document.getElementById('audio-controller')
@@ -64,13 +78,15 @@ class SoundReactor {
     this.audioElement.src = audioSrc
   }
 
-  /**
-   * WIP
-   */
   setAudioImport() {
     const selectFile = () => audioFileImport(this.onSelectAudioFile)
     this.audioSelect = document.querySelector('.select-btn')
     this.audioSelect.addEventListener('click', selectFile)
+  }
+
+  setAudioReset() {
+    this.resetBtn = document.querySelector('.reset-btn')
+    this.resetBtn.addEventListener('click', this.onResetAudio)
   }
 
   setupAudioContext() {
@@ -91,6 +107,12 @@ class SoundReactor {
     this.dataArray = new Uint8Array(this.analyser.frequencyBinCount)
   }
 
+  setPlayState(value) {
+    this.playing = value
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+
   play() {
     this.setPlayState(true)
     this.audioElement?.play()
@@ -101,10 +123,6 @@ class SoundReactor {
     this.audioElement?.pause()
   }
 
-  setPlayState(value) {
-    this.playing = value
-  }
-
   isPlaying() {
     this.setPlayState(!this.audioElement?.paused)
     return this.playing
@@ -113,6 +131,8 @@ class SoundReactor {
   getAudioData() {
     return this.dataArray
   }
+
+  //////////////////////////////////////////////////////////////////////////////
 
   update() {
     if (this.isPlaying()) {

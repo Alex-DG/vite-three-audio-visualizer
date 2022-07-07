@@ -16,10 +16,12 @@ document.querySelector('#app').innerHTML = `
       </audio>
      
       <div class="audio-select">
-        <span class="audio-name">Pandrezz - Curtain Call</span>
+        <span class="audio-name">Pandrezz_Curtain_Call.mp4</span>
         <button class="select-btn">
           <h2>🗂️</h2>
         </button>
+
+        <button class="reset-btn"><h2>🔁</h2></button>
       </div>
     </figure>
   </div>
