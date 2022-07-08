@@ -1,5 +1,6 @@
 import audioSrc from '../../assets/audio/Pandrezz_Curtain_Call.mp4'
 import { audioFileImport, audioNameUpdate, audioReset } from './utils/audio'
+import { avg, max, modulate } from './utils/math'
 
 class SoundReactor {
   constructor() {
@@ -128,8 +129,51 @@ class SoundReactor {
     return this.playing
   }
 
+  //////////////////////////////////////////////////////////////////////////////
+
   getAudioData() {
     return this.dataArray
+  }
+
+  getAudioDataProcessed() {
+    const dataArray = this.dataArray
+
+    const lowerHalfArray = dataArray.slice(0, dataArray.length / 2 - 1)
+    const upperHalfArray = dataArray.slice(
+      dataArray.length / 2 - 1,
+      dataArray.length - 1
+    )
+
+    const overallAvg = avg(dataArray)
+
+    const lowerMax = max(lowerHalfArray)
+    const lowerAvg = avg(lowerHalfArray)
+
+    const upperMax = max(upperHalfArray)
+    const upperAvg = avg(upperHalfArray)
+
+    const lowerMaxFr = lowerMax / lowerHalfArray.length
+    const lowerAvgFr = lowerAvg / lowerHalfArray.length
+
+    const upperMaxFr = upperMax / upperHalfArray.length
+    const upperAvgFr = upperAvg / upperHalfArray.length
+
+    const lowerMaxFrMod = modulate(Math.pow(lowerMaxFr, 0.8), 0, 1, 0, 8)
+    const upperAvgFrMod = modulate(upperAvgFr, 0, 1, 0, 4)
+
+    return {
+      overallAvg,
+      lowerMax,
+      lowerAvg,
+      upperMax,
+      upperAvg,
+      lowerMaxFr,
+      lowerAvgFr,
+      upperMaxFr,
+      upperAvgFr,
+      lowerMaxFrMod,
+      upperAvgFrMod,
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////

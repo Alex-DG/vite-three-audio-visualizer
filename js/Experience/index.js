@@ -2,7 +2,9 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 import SoundReactor from './SoundReactor'
-import VisualizerMaterial from './VisualizerMaterial'
+import { settings } from './utils/settings'
+import VisualizerIcoMaterial from './VisualizerIcoMaterial'
+import VisualizerPlaneMaterial from './VisualizerPlaneMaterial'
 
 class Experience {
   constructor(options) {
@@ -12,6 +14,7 @@ class Experience {
     this.container = options.domElement
     this.lastElapsedTime = 0
     this.deltaTime = 0
+    this.scene.add(this.group)
 
     this.init()
   }
@@ -26,7 +29,8 @@ class Experience {
     this.setRenderer()
     this.setCamera()
     this.setAudioController()
-    this.setVisualizer()
+    this.setVisualizerIco()
+    this.setVisualizerPlane()
     this.setResize()
 
     this.update()
@@ -64,12 +68,12 @@ class Experience {
   setCamera() {
     // Base camera
     this.camera = new THREE.PerspectiveCamera(
-      50,
+      45,
       this.sizes.width / this.sizes.height,
-      0.001,
+      0.1,
       1000
     )
-    this.camera.position.z = 90
+    this.camera.position.z = 5
     this.scene.add(this.camera)
 
     // Controls
@@ -85,21 +89,34 @@ class Experience {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     this.container.appendChild(this.renderer.domElement)
   }
-  setVisualizer() {
-    this.material = new VisualizerMaterial()
+
+  setVisualizerIco() {
+    this.materialIco = new VisualizerIcoMaterial()
+    const geometry = new THREE.IcosahedronBufferGeometry(1, 32)
+
+    this.visualizerIco = new THREE.Mesh(geometry, this.materialIco)
+    this.visualizerIco.position.set(0, -0.48, 0)
+
+    this.group.add(this.visualizerIco)
+  }
+
+  setVisualizerPlane() {
+    this.materialPlane = new VisualizerPlaneMaterial()
     const geometry = new THREE.PlaneBufferGeometry(128, 128, 64, 64)
 
-    this.visualizer = new THREE.Mesh(geometry, this.material)
-    this.visualizer.rotation.x = -Math.PI / 2 + Math.PI / 3
-    this.visualizer.position.set(0, -5, 0)
+    this.visualizerPlane = new THREE.Mesh(geometry, this.materialPlane)
+    this.visualizerPlane.scale.set(0.1, 0.1, 0.1)
+    this.visualizerPlane.rotation.x = -Math.PI / 2 + Math.PI / 3
+    this.visualizerPlane.position.set(0, -1, -3)
     this.group.rotation.y = Math.PI * 0.15
 
-    this.group.add(this.visualizer)
-    this.scene.add(this.group)
+    this.group.add(this.visualizerPlane)
   }
+
   setAudioController() {
     this.audioController = new SoundReactor()
   }
+
   setResize() {
     window.addEventListener('resize', this.resize)
   }
@@ -112,29 +129,69 @@ class Experience {
     this.lastElapsedTime = this.elapsedTime
   }
 
-  updateVisualizer() {
+  updateVisualizerIco() {
     if (this.audioController.isPlaying()) {
       // Update audio data
       this.audioController.update()
-      const audioData = this.audioController.getAudioData()
+      const dataArray = this.audioController.getAudioData()
 
       // Update visualizer material
-      const { uTime, uDataArray } = this.material.uniforms
-      uTime.value = this.elapsedTime
-      uDataArray.value = audioData
+      this.materialIco.uniforms.uDataArray.value = dataArray
+
+      const { lowerMaxFrMod, upperAvgFrMod } =
+        this.audioController.getAudioDataProcessed()
+
+      this.materialIco.uniforms.uBassFr.value = lowerMaxFrMod
+      this.materialIco.uniforms.uTreFr.value = upperAvgFrMod
     }
 
     // Update visualizer mesh
-    if (this.visualizer) {
-      const { position, rotation } = this.visualizer
-      position.z = Math.sin(this.elapsedTime * 0.5) * 8
-      rotation.y = Math.sin(this.elapsedTime) * 0.1
+    if (this.visualizerIco) {
+      const { position, rotation } = this.visualizerIco
+      position.z = Math.sin(this.elapsedTime * 0.5) * 0.5
+
+      rotation.x = Math.sin(this.elapsedTime * 0.5) * 0.5
+      rotation.y = Math.sin(this.elapsedTime * 0.5) * 0.5
+      rotation.z = Math.sin(this.elapsedTime * 0.5) * 0.5
+
+      // Update uniforms
+      this.materialIco.uniforms.uTime.value = this.elapsedTime
+      this.materialIco.uniforms.uSpeed.value = settings.ico.speed
+      this.materialIco.uniforms.uNoiseDensity.value = settings.ico.density
+      this.materialIco.uniforms.uNoiseStrength.value = settings.ico.strength
+      this.materialIco.uniforms.uFrequency.value = settings.ico.frequency
+      this.materialIco.uniforms.uAmplitude.value = settings.ico.amplitude
+      this.materialIco.uniforms.uIntensity.value = settings.ico.intensity
+    }
+  }
+
+  updateVisualizerPlane() {
+    if (this.audioController.isPlaying()) {
+      // Update audio data
+      this.audioController.update()
+      const dataArray = this.audioController.getAudioData()
+
+      // Update visualizer material
+      const { uTime, uDataArray } = this.materialPlane.uniforms
+      uTime.value = this.elapsedTime
+      uDataArray.value = dataArray
+    }
+
+    // Update visualizer mesh
+    if (this.visualizerPlane) {
+      const { rotation } = this.visualizerPlane
+      rotation.y = Math.sin(this.elapsedTime * 0.5) * 0.1
+
+      // Update uniforms
+      this.materialPlane.uniforms.uTime.value = this.elapsedTime
+      this.materialPlane.uniforms.uAmplitude.value = settings.plane.amplitude
     }
   }
 
   update() {
     this.updateTime()
-    this.updateVisualizer()
+    this.updateVisualizerIco()
+    this.updateVisualizerPlane()
 
     this.controls.update()
     this.renderer.render(this.scene, this.camera)
