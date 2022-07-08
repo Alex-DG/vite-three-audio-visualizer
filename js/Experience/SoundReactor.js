@@ -137,6 +137,7 @@ class SoundReactor {
 
   getAudioDataProcessed() {
     const dataArray = this.dataArray
+    if (!dataArray?.length) return
 
     const lowerHalfArray = dataArray.slice(0, dataArray.length / 2 - 1)
     const upperHalfArray = dataArray.slice(
