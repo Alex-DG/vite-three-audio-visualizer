@@ -213,7 +213,7 @@ void main() {
     float rf = 0.00001;
     float amp = 7.0;
     
-    float t = uTime * uSpeed;
+    float t = (uTime * 0.05) * uSpeed;
     float distortion = pnoise((normal + t) * uNoiseDensity, vec3(10.0)) * uNoiseStrength * 0.57;
 
     vec3 pos = position + (normal * distortion);

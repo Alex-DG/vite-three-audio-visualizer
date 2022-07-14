@@ -14,6 +14,7 @@ class Experience {
     this.container = options.domElement
     this.lastElapsedTime = 0
     this.deltaTime = 0
+    this.frameCount = 0
     this.scene.add(this.group)
 
     this.init()
@@ -124,6 +125,7 @@ class Experience {
   //////////////////////////////////////////////////////////////////////////////
 
   updateTime() {
+    this.frameCount += 1
     this.elapsedTime = this.clock.getElapsedTime()
     this.deltaTime = this.elapsedTime - this.lastElapsedTime
     this.lastElapsedTime = this.elapsedTime
@@ -155,7 +157,7 @@ class Experience {
       rotation.z = Math.sin(this.elapsedTime * 0.5) * 0.5
 
       // Update uniforms
-      this.materialIco.uniforms.uTime.value = this.elapsedTime
+      this.materialIco.uniforms.uTime.value = this.frameCount //this.elapsedTime
       this.materialIco.uniforms.uSpeed.value = settings.ico.speed
       this.materialIco.uniforms.uNoiseDensity.value = settings.ico.density
       this.materialIco.uniforms.uNoiseStrength.value = settings.ico.strength
@@ -173,7 +175,7 @@ class Experience {
 
       // Update visualizer material
       const { uTime, uDataArray } = this.materialPlane.uniforms
-      uTime.value = this.elapsedTime
+      uTime.value = this.frameCount //this.elapsedTime
       uDataArray.value = dataArray
     }
 
@@ -183,7 +185,7 @@ class Experience {
       rotation.y = Math.sin(this.elapsedTime * 0.5) * 0.1
 
       // Update uniforms
-      this.materialPlane.uniforms.uTime.value = this.elapsedTime
+      this.materialPlane.uniforms.uTime.value = this.frameCount //this.elapsedTime
       this.materialPlane.uniforms.uAmplitude.value = settings.plane.amplitude
     }
   }
