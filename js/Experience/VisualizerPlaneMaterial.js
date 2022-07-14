@@ -10,7 +10,7 @@ class VisualizerPlaneMaterial extends ShaderMaterial {
       wireframe: true,
       uniforms: {
         uTime: { value: 0.0 },
-        uDataArray: { value: new Uint8Array([0]) },
+        uDataArray: { value: settings.plane.dataArray },
         uAmplitude: { value: settings.plane.amplitude },
       },
       vertexShader,

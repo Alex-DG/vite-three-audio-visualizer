@@ -145,6 +145,9 @@ class Experience {
 
       this.materialIco.uniforms.uBassFr.value = lowerMaxFrMod
       this.materialIco.uniforms.uTreFr.value = upperAvgFrMod
+    } else {
+      this.materialIco.uniforms.uBassFr.value = 0
+      this.materialIco.uniforms.uTreFr.value = 0
     }
 
     // Update visualizer mesh

@@ -9,6 +9,7 @@ const ico = {
 
 const plane = {
   amplitude: 8,
+  dataArray: new Uint8Array([0]),
 }
 
 export const settings = {
